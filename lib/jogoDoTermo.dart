@@ -6,91 +6,118 @@ class FuncoesTermo extends ChangeNotifier {
   String palavraRecebida = '';
   List<String> chutes = [];
   bool jogoFinalizado = false;
+  List<List<Color>> letrasColoridas = [];
 
   final _controllerPalavra = TextEditingController();
   TextEditingController get controllerPalavra => _controllerPalavra;
 
   void separandoLetras(String palavra) {
+    if (chutes.length >= 6 || jogoFinalizado) return;
+
     List<String> letrasPalavraCerta = palavraCerta.split(''); // [a,r,r,o,z]
     List<String> letrasPalavraChutada = palavra.split(''); // [p,o,r,t,o]
-    List<String> letrasNasMesmasPosicoes = [];
-    List<String> letrasIguais = [];
-    
+    List<Color> cores = List.filled(5, Colors.grey);
 
-    for (int i = 0; i < letrasPalavraCerta.length; i++) {
+    for (int i = 0; i < letrasPalavraChutada.length; i++) {
       if (letrasPalavraChutada[i] == letrasPalavraCerta[i]) {
-        letrasNasMesmasPosicoes.add(letrasPalavraChutada[i]);
-      } else if (letrasPalavraChutada.contains(letrasPalavraCerta[i])) {
-        letrasIguais.add(letrasPalavraCerta[i]);
+        cores[i] = Colors.green;
+      } else if (letrasPalavraCerta.contains(letrasPalavraChutada[i])) {
+        cores[i] = Colors.yellow;
       }
     }
-    print(letrasNasMesmasPosicoes);
-    print(letrasIguais);
+    chutes.add(palavra);
+    letrasColoridas.add(cores);
+
+    if (palavra == palavraCerta) {
+      jogoFinalizado = true;
+    } else if (chutes.length >= 6) {
+      jogoFinalizado = true;
+    }
     controllerPalavra.clear();
+    notifyListeners();
   }
 }
-
-//classe chutes / chute, 
 
 class JogoDoTermo extends StatelessWidget {
   const JogoDoTermo({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return ChangeNotifierProvider( create: (_) => FuncoesTermo(),
-      child: Consumer<FuncoesTermo>(
-        builder: (_, state, __) {
-          return Scaffold(
-            backgroundColor: Colors.black,
-            appBar: AppBar(
-              backgroundColor: Colors.grey,
-              title: const Center(
-                child: Text(
-                  'JOGO DO TERMO',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+    return ChangeNotifierProvider(
+      create: (_) => FuncoesTermo(),
+      child: Consumer<FuncoesTermo>(builder: (_, state, __) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.grey,
+            title: const Center(
+              child: Text(
+                'JOGO DO TERMO',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                const Text(
+                  'Digite uma palavra de 5 letras',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
-              ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: state._controllerPalavra,
+                  maxLength: 5,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  decoration: decorationForm('Palavra'),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      if (state._controllerPalavra.text.length == 5) {
+                        state.separandoLetras(state.controllerPalavra.text);
+                      }
+                    },
+                    child: const Text('Enviar')),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.chutes.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: List.generate(
+                          5,
+                          (i) {
+                            return Container(
+                              margin: const EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: state.letrasColoridas[index][i],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                state.chutes[index][i],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  const Text(
-                    'Digite uma palavra de 5 letras',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: state._controllerPalavra,
-                    maxLength: 5,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                    decoration: decorationForm('Palavra'),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        state.separandoLetras(state._controllerPalavra.text);
-                      },
-                      child: const Text('Enviar')),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // ListView.builder(
-                  //   itemCount: state.letrasNasMesmasPosicoes.length,
-                  //   itemBuilder: (context, index) {
-                  //     return ListTile(
-                  //       title: Text(state.letrasNasMesmasPosicoes[index]),
-                  //     );
-                  //   },
-                  // ),
-                ],
-              ),
-            ),
-          );
-        }
-      ),
+          ),
+        );
+      }),
     );
   }
 }

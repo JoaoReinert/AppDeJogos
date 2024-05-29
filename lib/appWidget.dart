@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jogos/jogoDaForca.dart';
+import 'package:jogos/jogoDaVelha.dart';
 import 'package:jogos/jogoDoTermo.dart';
 
 class MyWidget extends StatefulWidget {
