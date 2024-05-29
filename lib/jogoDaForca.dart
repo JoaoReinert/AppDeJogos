@@ -50,7 +50,6 @@ class JogoDaForca extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<FuncoesForca>(context);
 
     return ChangeNotifierProvider( create: (context) => FuncoesForca(),
       child: Consumer<FuncoesForca>(
