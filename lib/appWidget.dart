@@ -14,17 +14,9 @@ class MyWidget extends StatefulWidget {
 class _MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
-     return //MultiProvider(
-    //   providers: [
-    //     Provider<Funcoes>(create: (_) => Funcoes()),
-    //     Provider<FuncoesForca>(create: (_) => FuncoesForca(),)
-    //   ],
-    ChangeNotifierProvider(
-      create: (_) => FuncoesTermo(),
-      child: const MaterialApp(
+     return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: JogoDoTermo(),
-      ),
     );
   }
 }

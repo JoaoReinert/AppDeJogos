@@ -10,68 +10,86 @@ class FuncoesTermo extends ChangeNotifier {
   final _controllerPalavra = TextEditingController();
   TextEditingController get controllerPalavra => _controllerPalavra;
 
-  void mostrarPalavras(String palavra) {
+  void separandoLetras(String palavra) {
     List<String> letrasPalavraCerta = palavraCerta.split(''); // [a,r,r,o,z]
     List<String> letrasPalavraChutada = palavra.split(''); // [p,o,r,t,o]
     List<String> letrasNasMesmasPosicoes = [];
     List<String> letrasIguais = [];
+    
 
     for (int i = 0; i < letrasPalavraCerta.length; i++) {
-      
       if (letrasPalavraChutada[i] == letrasPalavraCerta[i]) {
         letrasNasMesmasPosicoes.add(letrasPalavraChutada[i]);
       } else if (letrasPalavraChutada.contains(letrasPalavraCerta[i])) {
         letrasIguais.add(letrasPalavraCerta[i]);
-      } 
+      }
     }
-
+    print(letrasNasMesmasPosicoes);
+    print(letrasIguais);
+    controllerPalavra.clear();
   }
 }
+
+//classe chutes / chute, 
 
 class JogoDoTermo extends StatelessWidget {
   const JogoDoTermo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<FuncoesTermo>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: const Center(
-          child: Text(
-            'JOGO DO TERMO',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            const Text(
-              'Digite uma palavra de 5 letras',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+    return ChangeNotifierProvider( create: (_) => FuncoesTermo(),
+      child: Consumer<FuncoesTermo>(
+        builder: (_, state, __) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.grey,
+              title: const Center(
+                child: Text(
+                  'JOGO DO TERMO',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
-            const SizedBox(
-              height: 20,
+            body: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  const Text(
+                    'Digite uma palavra de 5 letras',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: state._controllerPalavra,
+                    maxLength: 5,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                    decoration: decorationForm('Palavra'),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        state.separandoLetras(state._controllerPalavra.text);
+                      },
+                      child: const Text('Enviar')),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  // ListView.builder(
+                  //   itemCount: state.letrasNasMesmasPosicoes.length,
+                  //   itemBuilder: (context, index) {
+                  //     return ListTile(
+                  //       title: Text(state.letrasNasMesmasPosicoes[index]),
+                  //     );
+                  //   },
+                  // ),
+                ],
+              ),
             ),
-            TextFormField(
-              controller: state._controllerPalavra,
-              maxLength: 5,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-              decoration: decorationForm('Palavra'),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  state.mostrarPalavras(state._controllerPalavra.text);
-                },
-                child: const Text('Enviar'))
-
-            
-          ],
-        ),
+          );
+        }
       ),
     );
   }

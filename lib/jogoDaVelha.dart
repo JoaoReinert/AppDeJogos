@@ -106,50 +106,55 @@ class JogoDaVelha extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<Funcoes>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: const Center(
-          child: Text(
-            'JOGO DA VELHA',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(35),
-            child: SizedBox(
-              height: 400,
-              child: GridView.builder(
-                itemCount: 9,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: GestureDetector(
-                        onTap: () {
-                          state.clicou(index);
-                        },
-                        child: state.mostrarDesenho(index)),
-                  );
-                },
+    return ChangeNotifierProvider(create: (_) => Funcoes(),
+      child: Consumer<Funcoes>(
+        builder: (_,state,__) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.grey,
+              title: const Center(
+                child: Text(
+                  'JOGO DA VELHA',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Text(
-            state.texto,
-            style: const TextStyle(color: Colors.white, fontSize: 30),
-          ),
-        ],
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(35),
+                  child: SizedBox(
+                    height: 400,
+                    child: GridView.builder(
+                      itemCount: 9,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: GestureDetector(
+                              onTap: () {
+                                state.clicou(index);
+                              },
+                              child: state.mostrarDesenho(index)),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  state.texto,
+                  style: const TextStyle(color: Colors.white, fontSize: 30),
+                ),
+              ],
+            ),
+          );
+        }
       ),
     );
   }

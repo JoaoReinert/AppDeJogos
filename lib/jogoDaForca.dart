@@ -52,76 +52,82 @@ class JogoDaForca extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = Provider.of<FuncoesForca>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: const Center(
-          child: Text(
-            'JOGO DA FORCA',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(20),
-              child: SizedBox(
-                height: 50,
+    return ChangeNotifierProvider( create: (context) => FuncoesForca(),
+      child: Consumer<FuncoesForca>(
+        builder: (_,state,__) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.grey,
+              title: const Center(
                 child: Text(
-                  'Digite uma letra',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  'JOGO DA FORCA',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-            TextFormField(
-              controller: state.controllerLetra,
-              maxLength: 1,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-              decoration: decorationForm('Letra'),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: SizedBox(
+                      height: 50,
+                      child: Text(
+                        'Digite uma letra',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: state.controllerLetra,
+                    maxLength: 1,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                    decoration: decorationForm('Letra'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (state.jogoFinalizado == false) {
+                        state.chutesLetras(state.controllerLetra.text.toUpperCase());
+                        state.controllerLetra.clear();
+                      } else {
+                        null;
+                      }
+                    },
+                    child: const Text('Enviar'),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    state.mostrarPalavra(),
+                    style: const TextStyle(color: Colors.white, fontSize: 30),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Chutes restantes: ${state.chutes}',
+                    style: const TextStyle(color: Colors.white, fontSize: 30),
+                  ),
+                  if (state.jogoFinalizado)
+                    if (state.chutes > 0)
+                      const Text(
+                        'Você ganhou!',
+                        style: TextStyle(color: Colors.green, fontSize: 30),
+                      )
+                    else
+                       Text(
+                        textAlign: TextAlign.center,
+                        'Você perdeu! \n A palavra era: ${state.palavra}',
+                        style: const TextStyle(color: Colors.red, fontSize: 30),
+                      ),
+                ],
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (state.jogoFinalizado == false) {
-                  state.chutesLetras(state.controllerLetra.text.toUpperCase());
-                  state.controllerLetra.clear();
-                } else {
-                  null;
-                }
-              },
-              child: const Text('Enviar'),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              state.mostrarPalavra(),
-              style: const TextStyle(color: Colors.white, fontSize: 30),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Chutes restantes: ${state.chutes}',
-              style: const TextStyle(color: Colors.white, fontSize: 30),
-            ),
-            if (state.jogoFinalizado)
-              if (state.chutes > 0)
-                const Text(
-                  'Você ganhou!',
-                  style: TextStyle(color: Colors.green, fontSize: 30),
-                )
-              else
-                 Text(
-                  textAlign: TextAlign.center,
-                  'Você perdeu! \n A palavra era: ${state.palavra}',
-                  style: const TextStyle(color: Colors.red, fontSize: 30),
-                ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }
